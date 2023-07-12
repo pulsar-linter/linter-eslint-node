@@ -8,46 +8,32 @@
     "atom": "readonly"
   },
   "parserOptions": {
-    "ecmaVersion": "latest",
+    "ecmaVersion": "2020",
     "sourceType": "module",
     "ecmaFeatures": {
-      "jsx": true
+      "jsx": false
     }
   },
   "plugins": [
-    "import"
+    "import",
+    "n"
   ],
   "extends": [
-    "eslint:recommended"
+    "eslint:recommended",
+    "plugin:n/recommended"
   ],
   "root": true,
   "rules": {
-    "no-trailing-spaces": [
-      "error",
-      { "ignoreComments": true }
-    ],
+    "no-trailing-spaces": [ "error", { "ignoreComments": true } ],
     "no-console": "off",
-    "max-len": [
-      1,
-      {
-        "code": 130
-      }
-    ],
-    "semi": [
-      "error",
-      "always"
-    ],
-    "comma-dangle": "off",
+    "max-len": [ 1, { "code": 130 } ],
+    "semi": [ "error", "always" ],
+    // "comma-dangle": ["error", "never"],
+    // "quotes": ["error", "double"],
     "global-require": "off",
     "import/no-import-module-exports": "off",
-    "import/no-unresolved": [
-      "error",
-      {
-        "ignore": [
-          "atom"
-        ]
-      }
-    ],
+    "import/no-unresolved": [ "error", { "ignore": [ "atom" ] } ],
+    "n/no-missing-import": 'off',
     "object-curly-newline": [
       "error",
       {
@@ -64,4 +50,28 @@
       }
     ]
   },
+
+  "settings": {
+    "node": {
+      # The Pulsar node version
+      "version": "^14.16.0",
+    },
+  },
+
+  "overrides": [
+    {
+      "files": [ "./lib/worker/*.js" ],
+
+      "parserOptions": {
+        "ecmaVersion": "2019",
+        "sourceType": "commonjs"
+      },
+      "settings": {
+        "node": {
+          # The ESLint minimum supported node version
+          "version": "^12.22.0",
+        },
+      }
+    }
+  ]
 }

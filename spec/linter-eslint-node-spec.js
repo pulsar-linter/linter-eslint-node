@@ -22,7 +22,8 @@ const paths = {
   fix: path.join(fixturesDir, 'files', 'with-config', 'fix.js'),
   cache: path.join(fixturesDir, 'files', 'with-config', '.eslintcache'),
   config: path.join(fixturesDir, 'configs', '.eslintrc.yml'),
-  configThatChanges: path.join(fixturesDir, 'files', 'with-config', '.eslintrc.js'),
+  configThatChanges: path.join(fixturesDir, 'files', 'config-change', '.eslintrc.js'),
+  fileForConfigThatChanges: path.join(fixturesDir, 'files', 'config-change', 'file.js'),
   ignored: path.join(fixturesDir, 'eslintignore', 'ignored.js'),
   endRange: path.join(fixturesDir, 'end-range', 'no-unreachable.js'),
   badCache: path.join(fixturesDir, 'badCache'),
@@ -268,7 +269,7 @@ describe('The eslint provider for Linter', () => {
   // These tests fail when the worker runs `lintText`, but pass when it runs
   // `lintFiles`. This makes no sense. They're skipped until I can figure out
   // why.
-  xdescribe('when a file is specified in an eslintIgnore key in package.json', () => {
+  describe('when a file is specified in an eslintIgnore key in package.json', () => {
     it('will still lint the file if an .eslintignore file is present', async () => {
       atom.config.set('linter-eslint-node.advanced.disableEslintIgnore', false);
       let filePath = path.join(paths.eslintIgnoreKeyDir, 'ignored.js');
@@ -600,7 +601,10 @@ describe('The eslint provider for Linter', () => {
   });
 
   describe("when the .eslintrc is changed", () => {
-    let configEditor, originalConfig;
+    /** @type {import('atom').TextEditor} */
+    let configEditor;
+    /** @type {string} */
+    let originalConfig;
     beforeEach(async () => {
       configEditor = await atom.workspace.open(paths.configThatChanges);
       originalConfig = configEditor.getText();
@@ -612,17 +616,20 @@ describe('The eslint provider for Linter', () => {
       await configEditor.save();
     });
 
+    // This test has been skipped because sometimes the event to update the editor takes longer than 1 second.
+    // TODO: Workout how to make this test not flaky
     it('reacts to the new rules', async () => {
-      const editor = await atom.workspace.open(paths.good);
-      let messages = await lint(editor);
-      expect(messages.length).toBe(0);
+      const editor = await atom.workspace.open(paths.fileForConfigThatChanges);
+      const originalMessages = await lint(editor);
+      expect(originalMessages.length).toBe(0);
 
-      let newConfig = originalConfig.replace(`"never"`, `"always"`);
-      configEditor.setText(newConfig);
+      const updatedConfig = originalConfig.replace(`"off"`, `"error"`);
+      configEditor.setText(updatedConfig);
       await configEditor.save();
       await wait(1000);
-      messages = await lint(editor);
-      expect(messages.length).toBe(2);
+
+      const updatedMessages = await lint(editor);
+      expect(updatedMessages.length).toBe(1);
     });
   });
 
