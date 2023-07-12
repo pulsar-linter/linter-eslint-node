@@ -113,7 +113,7 @@ describe('The eslint provider for Linter', () => {
   // A hacky error logger :eyes:
   linterEslintNode.handleError = (original => (error, type, editor) => {
     console.error(error);
-    return original(error, type, editor);
+    return original.call(linterEslintNode, error, type, editor);
   })(linterEslintNode.handleError);
 
   beforeEach(async () => {
