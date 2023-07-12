@@ -110,6 +110,12 @@ describe('The eslint provider for Linter', () => {
   const linterProvider = linterEslintNode.provideLinter();
   const { lint } = linterProvider;
 
+  // A hacky error logger :eyes:
+  linterEslintNode.handleError = (original => (error, type, editor) => {
+    console.error(error);
+    return original(error, type, editor);
+  })(linterEslintNode.handleError);
+
   beforeEach(async () => {
     atom.config.set('linter-eslint-node.advanced.disableEslintIgnore', true);
 
