@@ -74,7 +74,6 @@ if (process.env.CI) {
 
       it('should do nothing when opening an ESLint@6 project', async () => {
         await copyFilesIntoProject(paths.eslint6);
-        console.log('checking for existence of index.js:');
         expect(FS.existsSync(Path.join(paths.eslint6, 'index.js'))).toBe(true);
         let editor = await openAndSetProjectDir(
           Path.join(paths.eslint6, 'index.js'),
