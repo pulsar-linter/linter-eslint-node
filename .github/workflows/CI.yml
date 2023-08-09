@@ -90,17 +90,8 @@ jobs:
       - name: Lint ✨
         run: npm run test.lint
 
-  CommitLint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Commit lint ✨
-        uses: wagoid/commitlint-github-action@v4
-
   Release:
-    needs: [Test, CommitLint, Lint]
+    needs: [Test, Lint]
     if: github.ref == 'refs/heads/main' &&
       github.event.repository.fork == false
     runs-on: ubuntu-latest
