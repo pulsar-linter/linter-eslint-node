@@ -167,7 +167,7 @@
   "dependencies": {
     "atom-linter": "10.0.0",
     "atom-package-deps": "8.0.0",
-    "compare-versions": "4.1.3",
+    "compare-versions": "5.0.3",
     "eslint": "8.9.0",
     "lodash.get": "4.4.2",
     "ndjson": "2.0.0",
