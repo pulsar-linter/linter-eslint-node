@@ -134,9 +134,9 @@ describe("The eslint provider for Linter", () => {
       expect(messages.length).toBe(2);
 
       const expected0 = "'foo' is not defined. (no-undef)";
-      const expected0Url = "https://eslint.org/docs/rules/no-undef";
+      const expected0Url = "https://eslint.org/docs/latest/rules/no-undef";
       const expected1 = "Extra semicolon. (semi)";
-      const expected1Url = "https://eslint.org/docs/rules/semi";
+      const expected1Url = "https://eslint.org/docs/latest/rules/semi";
 
       expect(messages[0].severity).toBe("error");
       expect(messages[0].excerpt).toBe(expected0);
@@ -336,7 +336,7 @@ describe("The eslint provider for Linter", () => {
       await makeFixes(editor, 1);
       const messagesAfterFixing = await lint(editor);
       const expected = "Extra semicolon. (semi)";
-      const expectedUrl = "https://eslint.org/docs/rules/semi";
+      const expectedUrl = "https://eslint.org/docs/latest/rules/semi";
 
       expect(messagesAfterFixing.length).toBe(1);
       expect(messagesAfterFixing[0].excerpt).toBe(expected);
@@ -349,7 +349,7 @@ describe("The eslint provider for Linter", () => {
 
     const checkNoConsole = (message) => {
       const text = "Unexpected console statement. (no-console)";
-      const url = "https://eslint.org/docs/rules/no-console";
+      const url = "https://eslint.org/docs/latest/rules/no-console";
       expect(message.severity).toBe("error");
       expect(message.excerpt).toBe(text);
       expect(message.url).toBe(url);
@@ -359,7 +359,7 @@ describe("The eslint provider for Linter", () => {
 
     const checkNoTrailingSpace = (message) => {
       const text = "Trailing spaces not allowed. (no-trailing-spaces)";
-      const url = "https://eslint.org/docs/rules/no-trailing-spaces";
+      const url = "https://eslint.org/docs/latest/rules/no-trailing-spaces";
 
       expect(message.severity).toBe("error");
       expect(message.excerpt).toBe(text);
@@ -504,7 +504,7 @@ describe("The eslint provider for Linter", () => {
     const editor = await atom.workspace.open(paths.endRange);
     const messages = await lint(editor);
     const expected = "Unreachable code. (no-unreachable)";
-    const expectedUrl = "https://eslint.org/docs/rules/no-unreachable";
+    const expectedUrl = "https://eslint.org/docs/latest/rules/no-unreachable";
 
     expect(messages[0].severity).toBe("error");
     expect(messages[0].excerpt).toBe(expected);
