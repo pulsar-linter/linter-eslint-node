@@ -1,4 +1,4 @@
-'use babel';
+"use babel";
 
 export default (returnValue) => {
   // This will be a 2d array: list of param lists
@@ -10,7 +10,7 @@ export default (returnValue) => {
     calledWith.push(passedArgs);
     // Return value provided on spy init
     return returnValue === undefined
-      ? 'called spy'
+      ? "called spy"
       : returnValue;
   };
 

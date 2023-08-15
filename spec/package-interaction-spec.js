@@ -1,25 +1,25 @@
-'use babel';
-import { homedir } from 'os';
-import * as Path from 'path';
-import * as FS from 'fs';
+"use babel";
+import { homedir } from "os";
+import * as Path from "path";
+import * as FS from "fs";
 import {
   copyFileToDir,
   getNotification,
-  openAndSetProjectDir,
+  openAndSetProjectDir
   // wait
-} from './helpers';
-import rimraf from 'rimraf';
-import linterEslintNode from '../lib/main';
+} from "./helpers";
+import rimraf from "rimraf";
+import linterEslintNode from "../lib/main";
 
 const root = Path.normalize(homedir());
 const paths = {
-  eslint6: Path.join(root, 'with-eslint-6'),
-  eslint7: Path.join(root, 'with-eslint-7'),
-  eslintLatest: Path.join(root, 'with-eslint-latest')
+  eslint6: Path.join(root, "with-eslint-6"),
+  eslint7: Path.join(root, "with-eslint-7"),
+  eslintLatest: Path.join(root, "with-eslint-latest")
 };
 
-const packagesRoot = Path.join(root, '.pulsar', 'packages');
-const fixtureRoot = Path.join(__dirname, 'fixtures', 'ci', 'package-interaction');
+const packagesRoot = Path.join(root, ".pulsar", "packages");
+const fixtureRoot = Path.join(__dirname, "fixtures", "ci", "package-interaction");
 
 async function expectNoNotification (fn) {
   let notificationPromise = getNotification();
@@ -30,8 +30,8 @@ async function expectNoNotification (fn) {
 
 async function copyFilesIntoProject (projectPath) {
   let files = [
-    Path.join(fixtureRoot, '.eslintrc'),
-    Path.join(fixtureRoot, 'index.js')
+    Path.join(fixtureRoot, ".eslintrc"),
+    Path.join(fixtureRoot, "index.js")
   ];
   for (let file of files) {
     await copyFileToDir(file, projectPath);
@@ -40,8 +40,8 @@ async function copyFilesIntoProject (projectPath) {
 
 async function deleteFilesFromProject (projectPath) {
   let files = [
-    Path.join(projectPath, '.eslintrc'),
-    Path.join(projectPath, 'index.js')
+    Path.join(projectPath, ".eslintrc"),
+    Path.join(projectPath, "index.js")
   ];
   for (let file of files) {
     await rimraf.sync(file);
@@ -49,35 +49,34 @@ async function deleteFilesFromProject (projectPath) {
 }
 
 if (process.env.CI) {
-  describe('Package interaction', () => {
+  describe("Package interaction", () => {
     const linterProvider = linterEslintNode.provideLinter();
     const { lint } = linterProvider;
 
     beforeEach(async () => {
-      atom.config.set('linter-eslint-node.nodeBin', process.env.NODE_DEFAULT);
+      atom.config.set("linter-eslint-node.nodeBin", process.env.NODE_DEFAULT);
 
       atom.packages.triggerDeferredActivationHooks();
-      atom.packages.triggerActivationHook('core:loaded-shell-environment');
+      atom.packages.triggerActivationHook("core:loaded-shell-environment");
 
       await atom.packages.loadPackage(
-        Path.join(packagesRoot, 'linter-eslint')
+        Path.join(packagesRoot, "linter-eslint")
       );
 
-      await atom.packages.activatePackage('language-javascript');
-      await atom.packages.activatePackage('linter-eslint-node');
+      await atom.packages.activatePackage("language-javascript");
+      await atom.packages.activatePackage("linter-eslint-node");
     });
 
-    describe('With linter-eslint enabled', () => {
+    describe("With linter-eslint enabled", () => {
       beforeEach(async () => {
-        await atom.packages.activatePackage('linter-eslint');
+        await atom.packages.activatePackage("linter-eslint");
       });
 
-      it('should do nothing when opening an ESLint@6 project', async () => {
+      it("should do nothing when opening an ESLint@6 project", async () => {
         await copyFilesIntoProject(paths.eslint6);
-        console.log('checking for existence of index.js:');
-        expect(FS.existsSync(Path.join(paths.eslint6, 'index.js'))).toBe(true);
+        expect(FS.existsSync(Path.join(paths.eslint6, "index.js"))).toBe(true);
         let editor = await openAndSetProjectDir(
-          Path.join(paths.eslint6, 'index.js'),
+          Path.join(paths.eslint6, "index.js"),
           paths.eslint6
         );
 
@@ -89,10 +88,10 @@ if (process.env.CI) {
         await deleteFilesFromProject(paths.eslint6);
       });
 
-      it('should do nothing when opening an ESLint@7 project', async () => {
+      it("should do nothing when opening an ESLint@7 project", async () => {
         await copyFilesIntoProject(paths.eslint7);
         let editor = await openAndSetProjectDir(
-          Path.join(paths.eslint7, 'index.js'),
+          Path.join(paths.eslint7, "index.js"),
           paths.eslint7
         );
 
@@ -104,10 +103,10 @@ if (process.env.CI) {
         await deleteFilesFromProject(paths.eslint7);
       });
 
-      it('should lint when opening an ESLint@8 project', async () => {
+      it("should lint when opening an ESLint@8 project", async () => {
         await copyFilesIntoProject(paths.eslintLatest);
         let editor = await openAndSetProjectDir(
-          Path.join(paths.eslintLatest, 'index.js'),
+          Path.join(paths.eslintLatest, "index.js"),
           paths.eslintLatest
         );
 
@@ -119,15 +118,15 @@ if (process.env.CI) {
       });
     });
 
-    describe('With linter-eslint disabled', () => {
+    describe("With linter-eslint disabled", () => {
       beforeEach(async () => {
-        await atom.packages.deactivatePackage('linter-eslint');
+        await atom.packages.deactivatePackage("linter-eslint");
       });
 
-      it('should prompt to install linter-eslint when opening an ESLint@6 project', async () => {
+      it("should prompt to install linter-eslint when opening an ESLint@6 project", async () => {
         await copyFilesIntoProject(paths.eslint6);
         let editor = await openAndSetProjectDir(
-          Path.join(paths.eslint6, 'index.js'),
+          Path.join(paths.eslint6, "index.js"),
           paths.eslint6
         );
 
@@ -137,17 +136,17 @@ if (process.env.CI) {
         let notification = await notificationPromise;
 
         if (!notification) {
-          fail('Did not get notification');
+          fail("Did not get notification");
         } else {
-          expect(notification.getMessage()).toBe('linter-eslint-node: Incompatible ESLint');
+          expect(notification.getMessage()).toBe("linter-eslint-node: Incompatible ESLint");
         }
         await deleteFilesFromProject(paths.eslint6);
       });
 
-      it('should prompt to install linter-eslint when opening an ESLint@7 project', async () => {
+      it("should prompt to install linter-eslint when opening an ESLint@7 project", async () => {
         await copyFilesIntoProject(paths.eslint7);
         let editor = await openAndSetProjectDir(
-          Path.join(paths.eslint7, 'index.js'),
+          Path.join(paths.eslint7, "index.js"),
           paths.eslint7
         );
 
@@ -157,18 +156,18 @@ if (process.env.CI) {
         let notification = await notificationPromise;
 
         if (!notification) {
-          fail('Did not get notification');
+          fail("Did not get notification");
         } else {
-          expect(notification.getMessage()).toBe('linter-eslint-node: Incompatible ESLint');
+          expect(notification.getMessage()).toBe("linter-eslint-node: Incompatible ESLint");
         }
 
         await deleteFilesFromProject(paths.eslint7);
       });
 
-      it('should lint when opening an ESLint@8 project', async () => {
+      it("should lint when opening an ESLint@8 project", async () => {
         await copyFilesIntoProject(paths.eslintLatest);
         let editor = await openAndSetProjectDir(
-          Path.join(paths.eslintLatest, 'index.js'),
+          Path.join(paths.eslintLatest, "index.js"),
           paths.eslintLatest
         );
 

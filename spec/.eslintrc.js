@@ -4,6 +4,6 @@ module.exports = {
     atomtest: true
   },
   globals: {
-    pass: 'readonly'
+    pass: "readonly"
   }
 };

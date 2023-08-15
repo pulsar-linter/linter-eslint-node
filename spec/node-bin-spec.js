@@ -1,26 +1,26 @@
-'use babel';
-import { homedir } from 'os';
-import * as Path from 'path';
-import * as FS from 'fs';
+"use babel";
+import { homedir } from "os";
+import * as Path from "path";
+import * as FS from "fs";
 import {
   copyFileToDir,
   openAndSetProjectDir,
   wait
-} from './helpers';
-import rimraf from 'rimraf';
-import linterEslintNode from '../lib/main';
+} from "./helpers";
+import rimraf from "rimraf";
+import linterEslintNode from "../lib/main";
 
 const root = Path.normalize(homedir());
 const paths = {
-  eslint6: Path.join(root, 'with-eslint-6'),
-  eslint7: Path.join(root, 'with-eslint-7'),
-  eslintLatest: Path.join(root, 'with-eslint-latest')
+  eslint6: Path.join(root, "with-eslint-6"),
+  eslint7: Path.join(root, "with-eslint-7"),
+  eslintLatest: Path.join(root, "with-eslint-latest")
 };
 
-const fixtureRoot = Path.join(__dirname, 'fixtures', 'ci', 'package-interaction');
+const fixtureRoot = Path.join(__dirname, "fixtures", "ci", "package-interaction");
 
 async function writeProjectConfig (projectPath, config) {
-  let overrideFile = Path.join(projectPath, '.linter-eslint');
+  let overrideFile = Path.join(projectPath, ".linter-eslint");
   let text = JSON.stringify(config, null, 2);
   FS.writeFileSync(overrideFile, text);
   await wait(1000);
@@ -28,8 +28,8 @@ async function writeProjectConfig (projectPath, config) {
 
 async function copyFilesIntoProject (projectPath) {
   let files = [
-    Path.join(fixtureRoot, '.eslintrc'),
-    Path.join(fixtureRoot, 'index.js')
+    Path.join(fixtureRoot, ".eslintrc"),
+    Path.join(fixtureRoot, "index.js")
   ];
   for (let file of files) {
     await copyFileToDir(file, projectPath);
@@ -38,9 +38,9 @@ async function copyFilesIntoProject (projectPath) {
 
 async function deleteFilesFromProject (projectPath) {
   let files = [
-    Path.join(projectPath, '.eslintrc'),
-    Path.join(projectPath, 'index.js'),
-    Path.join(projectPath, '.linter-eslint')
+    Path.join(projectPath, ".eslintrc"),
+    Path.join(projectPath, "index.js"),
+    Path.join(projectPath, ".linter-eslint")
   ];
   for (let file of files) {
     await rimraf.sync(file);
@@ -48,33 +48,33 @@ async function deleteFilesFromProject (projectPath) {
 }
 
 function expectVersionMatch (expected, actual) {
-  expected = expected.replace(/\s/g, '');
-  actual = actual.replace(/\s/g, '');
+  expected = expected.replace(/\s/g, "");
+  actual = actual.replace(/\s/g, "");
   expect(expected).toBe(actual);
 }
 
 if (process.env.CI) {
-  describe('Node binary config', () => {
+  describe("Node binary config", () => {
     const linterProvider = linterEslintNode.provideLinter();
     const debugJob = linterEslintNode.debugJob.bind(linterEslintNode);
     const { lint } = linterProvider;
 
     beforeEach(async () => {
-      atom.config.set('linter-eslint-node.nodeBin', process.env.NODE_DEFAULT);
+      atom.config.set("linter-eslint-node.nodeBin", process.env.NODE_DEFAULT);
 
       atom.packages.triggerDeferredActivationHooks();
-      atom.packages.triggerActivationHook('core:loaded-shell-environment');
+      atom.packages.triggerActivationHook("core:loaded-shell-environment");
 
-      await atom.packages.activatePackage('language-javascript');
-      await atom.packages.activatePackage('linter-eslint-node');
+      await atom.packages.activatePackage("language-javascript");
+      await atom.packages.activatePackage("linter-eslint-node");
     });
 
-    describe('with default nodeBin', () => {
+    describe("with default nodeBin", () => {
       let editor;
       beforeEach(async () => {
         await copyFilesIntoProject(paths.eslintLatest);
         editor = await openAndSetProjectDir(
-          Path.join(paths.eslintLatest, 'index.js'),
+          Path.join(paths.eslintLatest, "index.js"),
           paths.eslintLatest
         );
       });
@@ -83,12 +83,12 @@ if (process.env.CI) {
         await deleteFilesFromProject(paths.eslintLatest);
       });
 
-      it('lints correctly', async () => {
+      it("lints correctly", async () => {
         let results = await lint(editor);
         expect(results.length).toBe(1);
       });
 
-      it('reports the correct version of Node', async () => {
+      it("reports the correct version of Node", async () => {
         let debug = await debugJob(editor);
         expectVersionMatch(
           debug.nodeVersion,
@@ -97,13 +97,13 @@ if (process.env.CI) {
       });
     });
 
-    describe('with project override', () => {
+    describe("with project override", () => {
       let editor;
 
       beforeEach(async () => {
         await copyFilesIntoProject(paths.eslintLatest);
         editor = await openAndSetProjectDir(
-          Path.join(paths.eslintLatest, 'index.js'),
+          Path.join(paths.eslintLatest, "index.js"),
           paths.eslintLatest
         );
         await writeProjectConfig(paths.eslintLatest, {
@@ -115,7 +115,7 @@ if (process.env.CI) {
         await deleteFilesFromProject(paths.eslintLatest);
       });
 
-      it('lints correctly and using the right version of Node', async () => {
+      it("lints correctly and using the right version of Node", async () => {
         let results = await lint(editor);
         expect(results.length).toBe(1);
 
@@ -127,13 +127,13 @@ if (process.env.CI) {
       });
     });
 
-    describe('with config change after activation', () => {
+    describe("with config change after activation", () => {
       let editor;
 
       beforeEach(async () => {
         await copyFilesIntoProject(paths.eslintLatest);
         editor = await openAndSetProjectDir(
-          Path.join(paths.eslintLatest, 'index.js'),
+          Path.join(paths.eslintLatest, "index.js"),
           paths.eslintLatest
         );
       });
@@ -142,7 +142,7 @@ if (process.env.CI) {
         await deleteFilesFromProject(paths.eslintLatest);
       });
 
-      it('lints correctly both before and after the version change', async () => {
+      it("lints correctly both before and after the version change", async () => {
         let debug = await debugJob(editor);
         expectVersionMatch(
           debug.nodeVersion,
@@ -152,7 +152,7 @@ if (process.env.CI) {
         let results = await lint(editor);
         expect(results.length).toBe(1);
 
-        atom.config.set('linter-eslint-node.nodeBin', process.env.NODE_LATEST);
+        atom.config.set("linter-eslint-node.nodeBin", process.env.NODE_LATEST);
         wait(1000);
 
         debug = await debugJob(editor);
