@@ -1,8 +1,8 @@
-"use babel";
+'use babel';
 
-import * as path from "path";
-import * as fs from "fs";
-import { tmpdir } from "os";
+import * as path from 'path';
+import * as fs from 'fs';
+import { tmpdir } from 'os';
 
 /**
  * Async helper to copy a file from one place to another on the filesystem.
@@ -19,8 +19,8 @@ export function copyFileToDir(fileToCopyPath, destinationDir, newFileName = null
     const rs = fs.createReadStream(fileToCopyPath);
     const ws = fs.createWriteStream(destinationPath);
 
-    ws.on("close", () => resolve(destinationPath));
-    ws.on("error", (error) => reject(error));
+    ws.on('close', () => resolve(destinationPath));
+    ws.on('error', (error) => reject(error));
 
     rs.pipe(ws);
   });
