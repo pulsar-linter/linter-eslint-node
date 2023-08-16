@@ -61,12 +61,11 @@ jobs:
         run: |
           ppm install
           npm install
-          npx atom-package-deps ./windows-deps
+          npx atom-package-deps .
       - name: Install dependencies
         if: runner.os != 'Windows'
         run: |
           pulsar --package install
-          pulsar --package install linter-eslint
           npx atom-package-deps .
       - name: List dependencies
         run: |

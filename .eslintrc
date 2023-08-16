@@ -62,7 +62,6 @@
   "overrides": [
     {
       "files": [
-        "./lib/worker*",
         "./lib/worker/**/*.js"
       ],
 
