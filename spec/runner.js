@@ -18,7 +18,7 @@ if (process.env.PATH === '/usr/bin:/bin:/usr/sbin:/sbin') {
 function setDefaultSettings(namespace, settings) {
   for (const name in settings) {
     const setting = settings[name];
-    if (setting.type === "object") {
+    if (setting.type === 'object') {
       setDefaultSettings(`${namespace}.${name}`, setting.properties);
     } else {
       atom.config.set(`${namespace}.${name}`, setting.default);
@@ -47,7 +47,7 @@ module.exports = createRunner({
 },
 () => {
   beforeEach(() => {
-    const { configSchema, name } = require("../package.json");
+    const { configSchema, name } = require('../package.json');
     setDefaultSettings(name, configSchema);
   });
 });

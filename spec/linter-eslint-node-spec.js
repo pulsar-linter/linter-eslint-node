@@ -133,10 +133,10 @@ describe('The eslint provider for Linter', () => {
       const messages = await lint(editor);
       expect(messages.length).toBe(2);
 
-      const expected0 = "'foo' is not defined. (no-undef)";
-      const expected0Url = 'https://eslint.org/docs/rules/no-undef';
+      const expected0 = '\'foo\' is not defined. (no-undef)';
+      const expected0Url = 'https://eslint.org/docs/latest/rules/no-undef';
       const expected1 = 'Extra semicolon. (semi)';
-      const expected1Url = 'https://eslint.org/docs/rules/semi';
+      const expected1Url = 'https://eslint.org/docs/latest/rules/semi';
 
       expect(messages[0].severity).toBe('error');
       expect(messages[0].excerpt).toBe(expected0);
@@ -204,7 +204,7 @@ describe('The eslint provider for Linter', () => {
     it('shows a message for an invalid import', async () => {
       const editor = await atom.workspace.open(paths.badImport);
       const messages = await lint(editor);
-      const expected = "Unable to resolve path to module '../nonexistent'. (import/no-unresolved)";
+      const expected = 'Unable to resolve path to module \'../nonexistent\'. (import/no-unresolved)';
       const expectedUrlRegEx = /https[\S]+eslint-plugin-import[\S]+no-unresolved.md/;
 
       expect(messages.length).toBe(1);
@@ -336,7 +336,7 @@ describe('The eslint provider for Linter', () => {
       await makeFixes(editor, 1);
       const messagesAfterFixing = await lint(editor);
       const expected = 'Extra semicolon. (semi)';
-      const expectedUrl = 'https://eslint.org/docs/rules/semi';
+      const expectedUrl = 'https://eslint.org/docs/latest/rules/semi';
 
       expect(messagesAfterFixing.length).toBe(1);
       expect(messagesAfterFixing[0].excerpt).toBe(expected);
@@ -349,7 +349,7 @@ describe('The eslint provider for Linter', () => {
 
     const checkNoConsole = (message) => {
       const text = 'Unexpected console statement. (no-console)';
-      const url = 'https://eslint.org/docs/rules/no-console';
+      const url = 'https://eslint.org/docs/latest/rules/no-console';
       expect(message.severity).toBe('error');
       expect(message.excerpt).toBe(text);
       expect(message.url).toBe(url);
@@ -359,7 +359,7 @@ describe('The eslint provider for Linter', () => {
 
     const checkNoTrailingSpace = (message) => {
       const text = 'Trailing spaces not allowed. (no-trailing-spaces)';
-      const url = 'https://eslint.org/docs/rules/no-trailing-spaces';
+      const url = 'https://eslint.org/docs/latest/rules/no-trailing-spaces';
 
       expect(message.severity).toBe('error');
       expect(message.excerpt).toBe(text);
@@ -504,7 +504,7 @@ describe('The eslint provider for Linter', () => {
     const editor = await atom.workspace.open(paths.endRange);
     const messages = await lint(editor);
     const expected = 'Unreachable code. (no-unreachable)';
-    const expectedUrl = 'https://eslint.org/docs/rules/no-unreachable';
+    const expectedUrl = 'https://eslint.org/docs/latest/rules/no-unreachable';
 
     expect(messages[0].severity).toBe('error');
     expect(messages[0].excerpt).toBe(expected);
@@ -572,7 +572,7 @@ describe('The eslint provider for Linter', () => {
       atom.config.set('linter-eslint-node.advanced.showRuleIdInMessage', true);
       const editor = await atom.workspace.open(paths.badImport);
       const messages = await lint(editor);
-      const expected = "Unable to resolve path to module '../nonexistent'. (import/no-unresolved)";
+      const expected = 'Unable to resolve path to module \'../nonexistent\'. (import/no-unresolved)';
 
       expect(messages.length).toBe(1);
       expect(messages[0].severity).toBe('error');
@@ -583,11 +583,11 @@ describe('The eslint provider for Linter', () => {
       expect(messages[0].solutions).not.toBeDefined();
     });
 
-    it("doesn't show the rule ID when disabled", async () => {
+    it('doesn\'t show the rule ID when disabled', async () => {
       atom.config.set('linter-eslint-node.advanced.showRuleIdInMessage', false);
       const editor = await atom.workspace.open(paths.badImport);
       const messages = await lint(editor);
-      const expected = "Unable to resolve path to module '../nonexistent'.";
+      const expected = 'Unable to resolve path to module \'../nonexistent\'.';
 
       expect(messages.length).toBe(1);
       expect(messages[0].severity).toBe('error');
@@ -599,7 +599,7 @@ describe('The eslint provider for Linter', () => {
     });
   });
 
-  describe("when the .eslintrc is changed", () => {
+  describe('when the .eslintrc is changed', () => {
     let configEditor, originalConfig;
     beforeEach(async () => {
       configEditor = await atom.workspace.open(paths.configThatChanges);
@@ -617,7 +617,7 @@ describe('The eslint provider for Linter', () => {
       let messages = await lint(editor);
       expect(messages.length).toBe(0);
 
-      let newConfig = originalConfig.replace(`"never"`, `"always"`);
+      let newConfig = originalConfig.replace('"never"', '"always"');
       configEditor.setText(newConfig);
       await configEditor.save();
       await wait(1000);
@@ -626,7 +626,7 @@ describe('The eslint provider for Linter', () => {
     });
   });
 
-  it("registers an 'ESLint Fix' right click menu command", () => {
+  it('registers an \'ESLint Fix\' right click menu command', () => {
     // NOTE: Reaches into the private data of the ContextMenuManager, there is
     // no public method to check this though so...
     expect(
@@ -645,7 +645,7 @@ describe('The eslint provider for Linter', () => {
     ).toBe(true);
   });
 
-  describe("When a non-project file is present", () => {
+  describe('When a non-project file is present', () => {
     let editorOutsideProject;
     beforeEach(async () => {
       const tempFilePathInside = await copyFileToTempDir(paths.bad);
@@ -656,7 +656,7 @@ describe('The eslint provider for Linter', () => {
       editorOutsideProject = await atom.workspace.open(tempFilePathOutside);
     });
 
-    it("does not suspend when it can't find that file's .eslintrc", async () => {
+    it('does not suspend when it can\'t find that file\'s .eslintrc', async () => {
       expect(linterEslintNode.inactive).toBe(false);
 
       // Fails to lint because of lack of `.eslintrc`.
@@ -667,7 +667,7 @@ describe('The eslint provider for Linter', () => {
     });
   });
 
-  describe("When JobManager#killWorker is called", () => {
+  describe('When JobManager#killWorker is called', () => {
     it('kills the worker', async () => {
       let { jobManager } = linterEslintNode;
       expect(!!jobManager).toBe(true);
