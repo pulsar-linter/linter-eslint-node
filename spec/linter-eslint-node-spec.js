@@ -111,6 +111,7 @@ describe('The eslint provider for Linter', () => {
 
   beforeEach(async () => {
     atom.config.set('linter-eslint-node.advanced.disableEslintIgnore', true);
+    atom.config.set('linter-eslint-node.enable', true);
 
     // Activate activation hook
     atom.packages.triggerDeferredActivationHooks();
@@ -261,6 +262,21 @@ describe('The eslint provider for Linter', () => {
 
       const messages = await lint(editor);
       expect(messages.length).toBe(1);
+      rimraf.sync(tempDir);
+    });
+
+    it('will do nothing if the "enable" option is `false`', async () => {
+      atom.config.set('linter-eslint-node.enable', false);
+      const tempPath = await copyFileToTempDir(
+        path.join(paths.eslintignoreDir, 'ignored.js')
+      );
+      const tempDir = path.dirname(tempPath);
+      const editor = await atom.workspace.open(tempPath);
+      atom.config.set('linter-eslint-node.advanced.disableEslintIgnore', false);
+      await copyFileToDir(path.join(paths.eslintignoreDir, '.eslintrc.yaml'), tempDir);
+
+      const messages = await lint(editor);
+      expect(messages).toBeUndefined();
       rimraf.sync(tempDir);
     });
   });
