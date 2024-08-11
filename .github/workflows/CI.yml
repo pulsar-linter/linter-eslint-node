@@ -71,11 +71,13 @@ jobs:
       - name: List dependencies
         run: |
           pulsar --package list --enabled --packages
-
+      - name: List home directory
+        if: runner.os != 'Windows'
+        run: ls -l ~
       - name: Run tests 👩🏾‍💻
         uses: coactions/setup-xvfb@v1
         with:
-          run: ls -l ~; pulsar --test spec
+          run: pulsar --test spec
 
   Lint:
     runs-on: ubuntu-latest
