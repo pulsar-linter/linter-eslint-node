@@ -28,7 +28,7 @@ jobs:
           volta install node@latest
           echo "NODE_LATEST=$(volta which node)" >> $GITHUB_ENV
           echo "NODE_LATEST_VERSION=$(node --version)" >> $GITHUB_ENV
-          volta install node@16
+          volta install node@18
           echo "NODE_DEFAULT=$(volta which node)" >> $GITHUB_ENV
           echo "NODE_DEFAULT_VERSION=$(node --version)" >> $GITHUB_ENV
       - name: Install multiple Node versions (Windows)
@@ -37,7 +37,7 @@ jobs:
           volta install node@latest
           echo "NODE_LATEST=$(volta which node)" >> $env:GITHUB_ENV
           echo "NODE_LATEST_VERSION=$(node --version)" >> $env:GITHUB_ENV
-          volta install node@16
+          volta install node@18
           echo "NODE_DEFAULT=$(volta which node)" >> $env:GITHUB_ENV
           echo "NODE_DEFAULT_VERSION=$(node --version)" >> $env:GITHUB_ENV
       - name: Setup dummy ESLint projects
