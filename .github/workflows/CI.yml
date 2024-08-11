@@ -75,7 +75,7 @@ jobs:
       - name: Run tests 👩🏾‍💻
         uses: coactions/setup-xvfb@v1
         with:
-          run: pulsar --test spec
+          run: pulsar -f --test spec
 
   Lint:
     runs-on: ubuntu-latest
