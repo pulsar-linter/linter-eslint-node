@@ -29,6 +29,7 @@ async function writeProjectConfig (projectPath, config) {
 async function copyFilesIntoProject (projectPath) {
   let files = [
     Path.join(fixtureRoot, '.eslintrc'),
+    Path.join(fixtureRoot, 'eslint.config.js'),
     Path.join(fixtureRoot, 'index.js')
   ];
   for (let file of files) {
