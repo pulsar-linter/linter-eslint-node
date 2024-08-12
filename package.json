@@ -35,6 +35,13 @@
     "core:loaded-shell-environment"
   ],
   "configSchema": {
+    "enable": {
+      "title": "Enable",
+      "description": "Whether to enable this package’s behavior. Provided as a way to disable linting for certain projects without having to disable the package.",
+      "type": "boolean",
+      "default": true,
+      "order": 0
+    },
     "scopes": {
       "title": "List of scopes to run ESLint on",
       "description": "Run `Editor: Log Cursor Scope` to determine the scopes for a file. To lint JavaScript inside HTML files, add `source.js.embedded.html` to this list and be sure that `eslint-plugin-html` is installed and added to your `.eslintrc`.",
