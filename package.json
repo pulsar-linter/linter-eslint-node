@@ -39,7 +39,7 @@
       "title": "Enable",
       "description": "Whether to enable this package’s behavior. Provided as a way to disable linting for certain projects without having to disable the package.",
       "type": "boolean",
-      "default": false,
+      "default": true,
       "order": 0
     },
     "scopes": {
