@@ -48,7 +48,9 @@ if (process.env.CI) {
         describe('checks bad.js and', () => {
           let editor = null;
           beforeEach(async () => {
-            editor = await atom.workspace.open(paths.bad);
+            editor = await atom.workspace.open(
+              Path.join(paths.eslint8, 'bad.js')
+            );
             atom.project.setPaths([paths.eslint8]);
           });
 
@@ -103,7 +105,9 @@ if (process.env.CI) {
       describe('checks bad.js and', () => {
         let editor = null;
         beforeEach(async () => {
-          editor = await atom.workspace.open(paths.bad);
+          editor = await atom.workspace.open(
+            Path.join(paths.eslint8, 'bad.js')
+          );
           atom.project.setPaths([paths.eslintLatest]);
         });
 
