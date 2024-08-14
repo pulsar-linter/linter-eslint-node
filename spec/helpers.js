@@ -32,7 +32,6 @@ export function copyFileToDir(fileToCopyPath, destinationDir, newFileName = null
  * @param  {string} fileToCopyPath  Path of the file to be copied
  * @return {Promise<string>}        path of the file in copy destination
  */
-// eslint-disable-next-line import/prefer-default-export
 export async function copyFileToTempDir(fileToCopyPath, newFileName = null) {
   const tempFixtureDir = fs.mkdtempSync(tmpdir() + path.sep);
   return copyFileToDir(fileToCopyPath, tempFixtureDir, newFileName);
