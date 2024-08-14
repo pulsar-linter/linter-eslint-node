@@ -41,7 +41,7 @@ if (process.env.CI) {
 
         afterAll(() => {
           for (let file of files) {
-            rimraf.sync(Path.join(paths.eslint8), file);
+            rimraf.sync(Path.join(paths.eslint8, file));
           }
         });
 
@@ -98,7 +98,7 @@ if (process.env.CI) {
 
       afterAll(() => {
         for (let file of files) {
-          rimraf.sync(Path.join(paths.eslintLatest), file);
+          rimraf.sync(Path.join(paths.eslintLatest, file));
         }
       });
 
