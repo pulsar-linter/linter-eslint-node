@@ -3,6 +3,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import { tmpdir } from 'os';
+import rimraf from 'rimraf';
 
 /**
  * Async helper to copy a file from one place to another on the filesystem.
@@ -24,6 +25,19 @@ export function copyFileToDir(fileToCopyPath, destinationDir, newFileName = null
 
     rs.pipe(ws);
   });
+}
+
+export function copyDirectoryWithCleanup(pathToDirectory, destination) {
+  let directoryName = path.dirname(pathToDirectory);
+  let destinationPath = path.join(destination, directoryName);
+  fs.cpSync(path, destination);
+
+  return _makeDirectoryCleanup(destinationPath);
+}
+
+function _makeDirectoryCleanup (destinationPath) {
+  console.debug(`Removing path: ${destinationPath}`);
+  return () => rimraf.sync(destinationPath);
 }
 
 /**

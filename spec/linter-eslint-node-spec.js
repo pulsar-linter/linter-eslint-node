@@ -21,8 +21,8 @@ const paths = {
   empty: path.join(fixturesDir, 'files', 'with-config', 'empty.js'),
   fix: path.join(fixturesDir, 'files', 'with-config', 'fix.js'),
   cache: path.join(fixturesDir, 'files', 'with-config', '.eslintcache'),
-  config: path.join(fixturesDir, 'configs', '.eslintrc.yml'),
-  configThatChanges: path.join(fixturesDir, 'files', 'with-config', '.eslintrc.js'),
+  config: path.join(fixturesDir, 'configs', 'eslint.config.js'),
+  configThatChanges: path.join(fixturesDir, 'files', 'with-config', 'eslint.config.js'),
   ignored: path.join(fixturesDir, 'eslintignore', 'ignored.js'),
   endRange: path.join(fixturesDir, 'end-range', 'no-unreachable.js'),
   badCache: path.join(fixturesDir, 'badCache'),
@@ -33,7 +33,10 @@ const paths = {
   fixablePlugin: path.join(fixturesDir, 'plugin-import', 'life.js'),
   eslintignoreDir: path.join(fixturesDir, 'eslintignore'),
   eslintIgnoreKeyDir: path.join(fixturesDir, 'configs', 'eslintignorekey'),
-  noConfig: path.join(fixturesDir, 'no-config', 'test.js')
+  noConfig: path.join(fixturesDir, 'no-config', 'test.js'),
+  flatConfigRoot: path.join(fixturesDir, 'flat-config'),
+  flatConfig: path.join(fixturesDir, 'flat-config', 'test.js'),
+  flatConfigIgnored: path.join(fixturesDir, 'flat-config', 'ignored.js')
 };
 
 /**
@@ -135,9 +138,9 @@ describe('The eslint provider for Linter', () => {
       expect(messages.length).toBe(2);
 
       const expected0 = "'foo' is not defined. (no-undef)";
-      const expected0Url = 'https://eslint.org/docs/rules/no-undef';
+      const expected0Url = 'https://eslint.org/docs/latest/rules/no-undef';
       const expected1 = 'Extra semicolon. (semi)';
-      const expected1Url = 'https://eslint.org/docs/rules/semi';
+      const expected1Url = 'https://eslint.org/docs/latest/rules/semi';
 
       expect(messages[0].severity).toBe('error');
       expect(messages[0].excerpt).toBe(expected0);
@@ -198,14 +201,14 @@ describe('The eslint provider for Linter', () => {
     it('correctly resolves imports from parent', async () => {
       const editor = await atom.workspace.open(paths.importing);
       const messages = await lint(editor);
-
+      console.log('messages:', messages);
       expect(messages.length).toBe(0);
     });
 
     it('shows a message for an invalid import', async () => {
       const editor = await atom.workspace.open(paths.badImport);
       const messages = await lint(editor);
-      const expected = "Unable to resolve path to module '../nonexistent'. (import/no-unresolved)";
+      const expected = "Unable to resolve path to module '../nonexistent'. (import-x/no-unresolved)";
       const expectedUrlRegEx = /https[\S]+eslint-plugin-import[\S]+no-unresolved.md/;
 
       expect(messages.length).toBe(1);
@@ -218,7 +221,7 @@ describe('The eslint provider for Linter', () => {
     });
   });
 
-  describe('when a file is specified in an .eslintignore file', () => {
+  describe('when a file is specified in an "ignored" list', () => {
     let editor;
     beforeEach(async () => {
       atom.config.set('linter-eslint-node.advanced.disableEslintIgnore', false);
@@ -253,12 +256,14 @@ describe('The eslint provider for Linter', () => {
   describe('when a file is not specified in .eslintignore file', () => {
     it('will give warnings when linting the file', async () => {
       const tempPath = await copyFileToTempDir(
-        path.join(paths.eslintignoreDir, 'ignored.js')
+        path.join(paths.eslintignoreDir, 'ignored.js'),
+        'not-ignored.js'
       );
       const tempDir = path.dirname(tempPath);
       const editor = await atom.workspace.open(tempPath);
       atom.config.set('linter-eslint-node.advanced.disableEslintIgnore', false);
-      await copyFileToDir(path.join(paths.eslintignoreDir, '.eslintrc.yaml'), tempDir);
+      // await copyFileToDir(path.join(paths.eslintignoreDir, '.eslintrc.yaml'), tempDir);
+      await copyFileToDir(path.join(paths.eslintignoreDir, 'eslint.config.js'), tempDir);
 
       const messages = await lint(editor);
       expect(messages.length).toBe(1);
@@ -268,12 +273,14 @@ describe('The eslint provider for Linter', () => {
     it('will do nothing while "enable" option is `false`, but wake if "enable" is set to `true`', async () => {
       atom.config.set('linter-eslint-node.enable', false);
       const tempPath = await copyFileToTempDir(
-        path.join(paths.eslintignoreDir, 'ignored.js')
+        path.join(paths.eslintignoreDir, 'ignored.js'),
+        'not-ignored.js'
       );
       const tempDir = path.dirname(tempPath);
       const editor = await atom.workspace.open(tempPath);
       atom.config.set('linter-eslint-node.advanced.disableEslintIgnore', false);
       await copyFileToDir(path.join(paths.eslintignoreDir, '.eslintrc.yaml'), tempDir);
+      await copyFileToDir(path.join(paths.eslintignoreDir, 'eslint.config.js'), tempDir);
 
       let messages = await lint(editor);
       expect(messages).toBeUndefined();
@@ -357,7 +364,7 @@ describe('The eslint provider for Linter', () => {
       await makeFixes(editor, 1);
       const messagesAfterFixing = await lint(editor);
       const expected = 'Extra semicolon. (semi)';
-      const expectedUrl = 'https://eslint.org/docs/rules/semi';
+      const expectedUrl = 'https://eslint.org/docs/latest/rules/semi';
 
       expect(messagesAfterFixing.length).toBe(1);
       expect(messagesAfterFixing[0].excerpt).toBe(expected);
@@ -370,7 +377,7 @@ describe('The eslint provider for Linter', () => {
 
     const checkNoConsole = (message) => {
       const text = 'Unexpected console statement. (no-console)';
-      const url = 'https://eslint.org/docs/rules/no-console';
+      const url = 'https://eslint.org/docs/latest/rules/no-console';
       expect(message.severity).toBe('error');
       expect(message.excerpt).toBe(text);
       expect(message.url).toBe(url);
@@ -380,7 +387,7 @@ describe('The eslint provider for Linter', () => {
 
     const checkNoTrailingSpace = (message) => {
       const text = 'Trailing spaces not allowed. (no-trailing-spaces)';
-      const url = 'https://eslint.org/docs/rules/no-trailing-spaces';
+      const url = 'https://eslint.org/docs/latest/rules/no-trailing-spaces';
 
       expect(message.severity).toBe('error');
       expect(message.excerpt).toBe(text);
@@ -480,7 +487,7 @@ describe('The eslint provider for Linter', () => {
       expect(messages.length).toBe(1);
       expect(messages[0].severity).toBe('error');
       expect(messages[0].excerpt).toBe('Expected 1 empty line after import '
-        + 'statement not followed by another import. (import/newline-after-import)');
+        + 'statement not followed by another import. (import-x/newline-after-import)');
 
       // Enable the option under test
       // NOTE: Depends on import/newline-after-import rule being marked as fixable
@@ -525,7 +532,7 @@ describe('The eslint provider for Linter', () => {
     const editor = await atom.workspace.open(paths.endRange);
     const messages = await lint(editor);
     const expected = 'Unreachable code. (no-unreachable)';
-    const expectedUrl = 'https://eslint.org/docs/rules/no-unreachable';
+    const expectedUrl = 'https://eslint.org/docs/latest/rules/no-unreachable';
 
     expect(messages[0].severity).toBe('error');
     expect(messages[0].excerpt).toBe(expected);
@@ -593,7 +600,7 @@ describe('The eslint provider for Linter', () => {
       atom.config.set('linter-eslint-node.advanced.showRuleIdInMessage', true);
       const editor = await atom.workspace.open(paths.badImport);
       const messages = await lint(editor);
-      const expected = "Unable to resolve path to module '../nonexistent'. (import/no-unresolved)";
+      const expected = "Unable to resolve path to module '../nonexistent'. (import-x/no-unresolved)";
 
       expect(messages.length).toBe(1);
       expect(messages[0].severity).toBe('error');
@@ -620,7 +627,7 @@ describe('The eslint provider for Linter', () => {
     });
   });
 
-  describe("when the .eslintrc is changed", () => {
+  describe("when the config file is changed", () => {
     let configEditor, originalConfig;
     beforeEach(async () => {
       configEditor = await atom.workspace.open(paths.configThatChanges);
@@ -666,6 +673,27 @@ describe('The eslint provider for Linter', () => {
     ).toBe(true);
   });
 
+  describe("When a project with a flat config file is present", () => {
+    let editor;
+    beforeEach(async () => {
+      atom.config.set('linter-eslint-node.advanced.disableEslintIgnore', false);
+      atom.project.setPaths([projectDir]);
+      atom.config.set(`linter-eslint-node.advanced.enableLogging`, true);
+    });
+
+    it("lints correctly", async () => {
+      editor = await atom.workspace.open(paths.flatConfig);
+      let messages = await lint(editor);
+      expect(messages.length).toBe(2);
+    });
+
+    it("ignores an ignored file", async () => {
+      editor = await atom.workspace.open(paths.flatConfigIgnored);
+      let messages = await lint(editor);
+      expect(messages.length).toBe(0);
+    });
+  });
+
   describe("When a non-project file is present", () => {
     let editorOutsideProject;
     beforeEach(async () => {
@@ -677,10 +705,10 @@ describe('The eslint provider for Linter', () => {
       editorOutsideProject = await atom.workspace.open(tempFilePathOutside);
     });
 
-    it("does not suspend when it can't find that file's .eslintrc", async () => {
+    it("does not suspend when it can't find that file's config", async () => {
       expect(linterEslintNode.inactive).toBe(false);
 
-      // Fails to lint because of lack of `.eslintrc`.
+      // Fails to lint because of lack of ESLint config file.
       const messages = await lint(editorOutsideProject);
       expect(messages.length).toBe(0);
 
