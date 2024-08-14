@@ -13,10 +13,9 @@ import {
 import rimraf from 'rimraf';
 import linterEslintNode from '../lib/main';
 
-const packagesRoot = Path.join(root, '.pulsar', 'packages');
-const fixtureRoot = Path.join(__dirname, 'fixtures');
 
 const root = Path.normalize(homedir());
+const fixtureRoot = Path.join(__dirname, 'fixtures');
 const paths = {
   eslint7: Path.join(root, 'with-eslint-7'),
   eslint8: Path.join(root, 'with-eslint-8'),
