@@ -279,7 +279,6 @@ describe('The eslint provider for Linter', () => {
       const tempDir = path.dirname(tempPath);
       const editor = await atom.workspace.open(tempPath);
       atom.config.set('linter-eslint-node.advanced.disableEslintIgnore', false);
-      await copyFileToDir(path.join(paths.eslintignoreDir, '.eslintrc.yaml'), tempDir);
       await copyFileToDir(path.join(paths.eslintignoreDir, 'eslint.config.js'), tempDir);
 
       let messages = await lint(editor);
@@ -293,15 +292,16 @@ describe('The eslint provider for Linter', () => {
       rimraf.sync(tempDir);
     });
 
-    it('will do nothing while "enable" option is `false`, but wake if "enable" is set to `true`', async () => {
+    fit('will do nothing while "enable" option is `false`, but wake if "enable" is set to `true`', async () => {
       atom.config.set('linter-eslint-node.enable', false);
       const tempPath = await copyFileToTempDir(
-        path.join(paths.eslintignoreDir, 'ignored.js')
+        path.join(paths.eslintignoreDir, 'ignored.js'),
+        'not-ignored.js'
       );
       const tempDir = path.dirname(tempPath);
       const editor = await atom.workspace.open(tempPath);
       atom.config.set('linter-eslint-node.advanced.disableEslintIgnore', false);
-      await copyFileToDir(path.join(paths.eslintignoreDir, '.eslintrc.yaml'), tempDir);
+      await copyFileToDir(path.join(paths.eslintignoreDir, 'eslint.config.js'), tempDir);
 
       let messages = await lint(editor);
       expect(messages).toBeUndefined();
