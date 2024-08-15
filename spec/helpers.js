@@ -1,6 +1,7 @@
 'use babel';
 
 import * as path from 'path';
+import { copySync } from 'fs-plus';
 import * as fs from 'fs';
 import { tmpdir } from 'os';
 import rimraf from 'rimraf';
@@ -28,9 +29,10 @@ export function copyFileToDir(fileToCopyPath, destinationDir, newFileName = null
 }
 
 export function copyDirectoryWithCleanup(pathToDirectory, destination) {
-  let directoryName = path.dirname(pathToDirectory);
+  let directoryName = path.basename(pathToDirectory);
   let destinationPath = path.join(destination, directoryName);
-  fs.cpSync(path, destination);
+  fs.mkdirSync(destinationPath);
+  copySync(pathToDirectory, destinationPath);
 
   return _makeDirectoryCleanup(destinationPath);
 }
