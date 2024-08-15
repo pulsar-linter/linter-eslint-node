@@ -286,6 +286,7 @@ describe('The eslint provider for Linter', () => {
       expect(messages).toBeUndefined();
 
       atom.config.set('linter-eslint-node.enable', true);
+      await wait(1000);
       messages = await lint(editor);
       expect(messages.length).toBe(1);
 
