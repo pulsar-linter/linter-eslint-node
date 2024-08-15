@@ -27,7 +27,7 @@ describe('Node path tester', () => {
       try {
         await NodePathTester.test('fdsfljksdafd');
         fail();
-      } catch (err) {
+      } catch (_err) {
         pass();
       }
     });

@@ -52,6 +52,11 @@ jobs:
           npm install eslint@7
           cd ..
 
+          mkdir ~/with-eslint-8 && cd ~/with-eslint-8
+          npm init --yes
+          npm install eslint@8
+          cd ..
+
           mkdir ~/with-eslint-latest && cd ~/with-eslint-latest
           npm init --yes
           npm install eslint@latest

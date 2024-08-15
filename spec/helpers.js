@@ -1,8 +1,10 @@
 'use babel';
 
 import * as path from 'path';
+import { copySync } from 'fs-plus';
 import * as fs from 'fs';
 import { tmpdir } from 'os';
+import rimraf from 'rimraf';
 
 /**
  * Async helper to copy a file from one place to another on the filesystem.
@@ -26,13 +28,26 @@ export function copyFileToDir(fileToCopyPath, destinationDir, newFileName = null
   });
 }
 
+export function copyDirectoryWithCleanup(pathToDirectory, destination) {
+  let directoryName = path.basename(pathToDirectory);
+  let destinationPath = path.join(destination, directoryName);
+  fs.mkdirSync(destinationPath);
+  copySync(pathToDirectory, destinationPath);
+
+  return _makeDirectoryCleanup(destinationPath);
+}
+
+function _makeDirectoryCleanup (destinationPath) {
+  console.debug(`Removing path: ${destinationPath}`);
+  return () => rimraf.sync(destinationPath);
+}
+
 /**
  * Utility helper to copy a file into the OS temp directory.
  *
  * @param  {string} fileToCopyPath  Path of the file to be copied
  * @return {Promise<string>}        path of the file in copy destination
  */
-// eslint-disable-next-line import/prefer-default-export
 export async function copyFileToTempDir(fileToCopyPath, newFileName = null) {
   const tempFixtureDir = fs.mkdtempSync(tmpdir() + path.sep);
   return copyFileToDir(fileToCopyPath, tempFixtureDir, newFileName);
