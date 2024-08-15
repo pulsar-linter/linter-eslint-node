@@ -292,7 +292,7 @@ describe('The eslint provider for Linter', () => {
       rimraf.sync(tempDir);
     });
 
-    fit('will do nothing while "enable" option is `false`, but wake if "enable" is set to `true`', async () => {
+    it('will do nothing while "enable" option is `false`, but wake if "enable" is set to `true`', async () => {
       atom.config.set('linter-eslint-node.enable', false);
       const tempPath = await copyFileToTempDir(
         path.join(paths.eslintignoreDir, 'ignored.js'),
