@@ -17,7 +17,7 @@ jobs:
           - windows-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: pulsar-edit/action-pulsar-dependency@v3.3
+      - uses: pulsar-edit/action-pulsar-dependency@v3.4
       - uses: actions/setup-node@v3
         with:
           node-version: 'lts/*'
@@ -97,7 +97,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: pulsar-edit/action-pulsar-dependency@v3.3
+      - uses: pulsar-edit/action-pulsar-dependency@v3.4
       - uses: actions/setup-node@v3
         with:
           node-version: "lts/*"
