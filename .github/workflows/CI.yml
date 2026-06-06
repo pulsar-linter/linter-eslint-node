@@ -22,6 +22,9 @@ jobs:
         with:
           node-version: 'lts/*'
       - uses: volta-cli/action@v4
+      - name: Install prerequisites (Linux)
+        if: runner.os == 'Linux'
+        run: apt-get install libsecret-1-0
       - name: Install multiple Node versions
         if: runner.os != 'Windows'
         run: |
