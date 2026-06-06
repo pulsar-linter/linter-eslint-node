@@ -16,15 +16,15 @@ jobs:
           - macos-latest
           - windows-latest
     steps:
+      - name: Install prerequisites (Linux)
+        if: runner.os == 'Linux'
+        run: apt-get install libsecret-1-0
       - uses: actions/checkout@v3
       - uses: pulsar-edit/action-pulsar-dependency@v3.4
       - uses: actions/setup-node@v3
         with:
           node-version: 'lts/*'
       - uses: volta-cli/action@v4
-      - name: Install prerequisites (Linux)
-        if: runner.os == 'Linux'
-        run: apt-get install libsecret-1-0
       - name: Install multiple Node versions
         if: runner.os != 'Windows'
         run: |
