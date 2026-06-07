@@ -160,6 +160,13 @@
           "type": "boolean",
           "default": false,
           "order": 4
+        },
+        "jobDurationTimeoutMs": {
+          "title": "Job Duration Timeout",
+          "description": "How long (in milliseconds) to wait for a job to come back from the worker before raising an error. Increase this value as needed if you work in a very large project and linting takes longer than usual.",
+          "type": "number",
+          "default": 15000,
+          "order": 5
         }
       }
     }

@@ -16,6 +16,9 @@ jobs:
           - macos-latest
           - windows-latest
     steps:
+      - name: Install prerequisites (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get install libsecret-1-0
       - uses: actions/checkout@v3
       - uses: pulsar-edit/action-pulsar-dependency@v3.4
       - uses: actions/setup-node@v3

@@ -73,14 +73,6 @@ function getNotification(expectedMessage) {
  */
 async function makeFixes(textEditor, expectedFixCount) {
   const buffer = textEditor.getBuffer();
-  /** @type {Promise<void>} */
-  const editorReloadPromise = new Promise((resolve) => {
-    // Subscribe to file reload events
-    const editorReloadSubscription = buffer.onDidReload(() => {
-      editorReloadSubscription.dispose();
-      resolve();
-    });
-  });
 
   let expectedMessage;
   if (expectedFixCount === 0) {
@@ -101,8 +93,7 @@ async function makeFixes(textEditor, expectedFixCount) {
   expect(notification.getType()).toBe('success');
 
   // After editor reloads, it should be safe for consuming test to resume.
-  buffer.reload();
-  return editorReloadPromise;
+  await buffer.reload();
 }
 
 describe('The eslint provider for Linter', () => {
@@ -320,11 +311,11 @@ describe('The eslint provider for Linter', () => {
 
     beforeEach(async () => {
       atom.config.set('linter-eslint-node.advanced.useCache', false);
-      // Copy the file to a temporary folder
+      // Copy the file to a temporary folder.
       const tempFixturePath = await copyFileToTempDir(paths.fix);
       editor = await atom.workspace.open(tempFixturePath);
       tempDir = path.dirname(tempFixturePath);
-      // Copy the config to the same temporary directory
+      // Copy the config to the same temporary directory.
       await copyFileToDir(paths.config, tempDir);
     });
 
@@ -339,7 +330,7 @@ describe('The eslint provider for Linter', () => {
      */
     async function firstLint(textEditor) {
       const messages = await lint(textEditor);
-      // The original file has two errors
+      // The original file has two errors.
       expect(messages.length).toBe(2);
     }
 
@@ -362,6 +353,20 @@ describe('The eslint provider for Linter', () => {
       expect(messagesAfterFixing.length).toBe(1);
       expect(messagesAfterFixing[0].excerpt).toBe(expected);
       expect(messagesAfterFixing[0].url).toBe(expectedUrl);
+    });
+
+    describe('on save', () => {
+      beforeEach(() => {
+        atom.config.set('linter-eslint-node.autofix.fixOnSave', true);
+      });
+
+      it('auto-fixes on save', async () => {
+        editor.setCursorBufferPosition([Infinity, Infinity]);
+        editor.getLastSelection().insertText('\n');
+        expect(editor.isModified()).toBe(true);
+        await editor.save();
+        expect(editor.getText()).not.toContain(';');
+      });
     });
   });
 
